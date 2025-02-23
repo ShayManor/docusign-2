@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>DocuSign 2.0 - AI Document Assistant</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
+    .container { max-width: 800px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; }
+    .section { margin-bottom: 30px; }
+    h1, h2 { color: #333; }
+    label { display: block; margin-top: 10px; }
+    input, textarea, button { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
+    button { background: #007BFF; color: #fff; border: none; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    .result { background: #eef; padding: 10px; margin-top: 15px; border: 1px solid #ccd; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>DocuSign 2.0 - AI Document Assistant</h1>
+    <p>
+      Everyday, complicated documents (like tax forms, NDAs, employment contracts, etc.) create friction in our lives.
+      This tool uses AI to auto-generate document templates, fill in known data, explain complicated terms,
+      and even create full legal contracts from a short description.
+    </p>
+
+    <!-- Document Processing Section -->
+    <div class="section">
+      <h2>Process a Document</h2>
+      <form id="docForm" enctype="multipart/form-data">
+        <label for="name">Name:</label>
+        <input type="text" name="name" id="name" placeholder="Your Name" value="Alice Example">
+
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" placeholder="Your Email" value="alice@example.com">
+
+        <label for="document_text">Document Text:</label>
+        <textarea name="document_text" id="document_text" rows="5"
+          placeholder="Paste your document text here...">This is a sample sales agreement for processing. [VARIABLE: amount, date, signature]</textarea>
+
+        <label for="document">Or Upload a Document File (text file):</label>
+        <input type="file" name="document" id="document">
+
+        <button type="submit">Process Document</button>
+      </form>
+      <div id="processResult" class="result" style="display:none;"></div>
+    </div>
+
+    <!-- Legal Term Explanation Section -->
+    <div class="section">
+      <h2>Explain a Legal Term</h2>
+      <form id="explainForm">
+        <label for="term">Legal Term:</label>
+        <input type="text" name="term" id="term" placeholder="Enter a legal term (e.g., 'indemnity clause')" value="indemnity clause">
+        <button type="submit">Explain Term</button>
+      </form>
+      <div id="explainResult" class="result" style="display:none;"></div>
+    </div>
+
+    <!-- Generate Legal Contract Section -->
+    <div class="section">
+      <h2>Generate Legal Contract</h2>
+      <form id="generateForm">
+        <label for="description">Contract Description:</label>
+        <textarea name="description" id="description" rows="4"
+          placeholder="Enter a brief description of the legal contract you require...">This contract is for a non-disclosure agreement between two parties regarding confidential business information.</textarea>
+        <button type="submit">Download Contract as PDF</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Handle document processing form submission
+    document.getElementById('docForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var formData = new FormData(this);
+      fetch('/process', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('processResult').style.display = 'block';
+        document.getElementById('processResult').innerText = data.result;
+      })
+      .catch(error => console.error('Error:', error));
+    });
+
+    // Handle legal term explanation form submission
+    document.getElementById('explainForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var formData = new FormData(this);
+      fetch('/explain', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('explainResult').style.display = 'block';
+        document.getElementById('explainResult').innerText = data.explanation;
+      })
+      .catch(error => console.error('Error:', error));
+    });
+
+    // Handle legal contract generation form submission (download PDF)
+    document.getElementById('generateForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var formData = new FormData(this);
+      fetch('/generate_contract', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.blob())
+      .then(blob => {
+        var url = window.URL.createObjectURL(blob);
+        var a = document.createElement('a');
+        a.href = url;
+        a.download = "contract.pdf";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      })
+      .catch(error => console.error('Error:', error));
+    });
+  </script>
+</body>
+</html>

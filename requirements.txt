@@ -1,0 +1,4 @@
+Flask==3.1.0
+Flask_Cors==5.0.0
+openai==1.63.2
+pandas==2.2.3
