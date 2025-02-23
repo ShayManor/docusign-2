@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify, make_response
 import os
 from ask_ai import ask_ai
-import markdown
+# import markdown
 # from weasyprint import HTML
 
 app = Flask(__name__)
@@ -62,7 +62,7 @@ def generate_contract():
     markdown_content = ask_ai(prompt)
 
     # Convert markdown to HTML and add basic styling.
-    html_body = markdown.markdown(markdown_content)
+    # html_body = markdown.markdown(markdown_content)
     html_content = f"""
     <!DOCTYPE html>
     <html>
